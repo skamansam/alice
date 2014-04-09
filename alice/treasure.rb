@@ -4,6 +4,7 @@ class Alice::Treasure
   include Mongoid::Timestamps
 
   field :name
+  field :description
   field :is_cursed, type: Boolean
   field :is_hidden, type: Boolean
 
@@ -13,6 +14,23 @@ class Alice::Treasure
 
   belongs_to :user
   belongs_to :place
+
+  def self.stable
+    [
+      :candle,
+      :bell,
+      :book,
+      :cards_against_humanity,
+      :spiral_notebook,
+      :twenty_sided_die,
+      :pokemon_cards,
+      :commemorative_statuette_of_liberty,
+      :broken_game_console,
+      :bow_and_arrow,
+      :milkshake,
+      :lantern
+    ]
+  end
 
   def self.reset_hidden!
     hidden.map(&:delete)

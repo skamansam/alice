@@ -111,6 +111,7 @@ class Alice::Place
       "pitch dark",
       "filled with inky darkness",
       "distinguished by its many paper lanterns",
+      ""
       nil,
       nil,
       nil,
@@ -178,6 +179,7 @@ class Alice::Place
       "with a locked door on the far wall",
       "with scratches along the floor",
       "with claw marks on the wall",
+      "with graffiti on the wall"
       "with bare shelves lining the walls",
       "with walls covered in paintings depicting #{things}",
       "covered with posters of #{things}",
@@ -314,7 +316,7 @@ class Alice::Place
 
   def has_grue?
     return false if self.x == 0 && self.y == 0
-    self.description =~ /dark|dim|shadow/ && rand(5) == 0
+    @has_grue ||= self.description =~ /dark|dim|shadow/ && rand(5) == 0
   end
 
   def has_bow?
@@ -331,8 +333,14 @@ class Alice::Place
     elsif self.x == 0 && self.y == 0
       "#{self.description}. #{contents} Exits: #{exits.to_sentence}.".gsub('  ', ' ').gsub(' .', '.').gsub('..', '.')
     else
+      create_items_from_description
       "You are in #{self.description}. #{contents} Exits: #{exits.to_sentence}.".gsub('  ', ' ').gsub(' .', '.').gsub('..', '.')
     end
+  end
+
+  def create_items_from_description
+    stuff = Alice::Treasures.stable.map(&:name) | Alice::Parser::NgramFactory.new(description.gsub(/[^a-zA-Z0-9\_\ ]/, '')).omnigrams
+    stuff.each{ |thing| Alice::Treasure.place_in(self) }
   end
 
   def contents
