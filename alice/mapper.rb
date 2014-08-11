@@ -1,11 +1,16 @@
 class Mapper
 
+  include Sidekiq::Worker
+
+  def perform
+    create
+  end
+
   def create
     content = ::Place.all.map do |place|
       room(place.x, place.y, place.is_current, place.describe, place.exits)
     end
     write_file(content)
-#    save_to_cloud
   end
 
   def path_to_file
@@ -16,11 +21,6 @@ class Mapper
     File.open(path_to_file, "w+") do |file|
       file.puts document(content)
     end
-  end
-
-  def save_to_cloud
-    url = Alice::AWS.new.upload(path_to_file)
-    puts url
   end
 
   def room(x, y, is_current, desc, exits=[])

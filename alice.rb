@@ -24,6 +24,10 @@ module Alice
 
 end
 
+Sidekiq.configure_server do |config|
+  config.redis = { :namespace => 'alice' }
+end
+
 Yummly.configure do |config|
   config.app_id = ENV['YUMMLY_APP_ID']
   config.app_key = ENV['YUMMLY_APP_KEY']

@@ -49,7 +49,7 @@ class Place
       room.exits = (random_exits | exits_for_neighbors).flatten.compact.uniq
     end
     room.save
-    Mapper.new.create
+    Mapper.perform_async
     room
   end
 
@@ -167,7 +167,7 @@ class Place
   def enter
     Place.set_current_room(self)
     self.update_attribute(:last_visited, DateTime.now)
-    Mapper.new.create
+    Mapper.perform_async
     place_grue
     place_item
     handle_grue || describe
